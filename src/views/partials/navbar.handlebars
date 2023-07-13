@@ -1,0 +1,87 @@
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Blog</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="linkProductos" href="/noticias">Noticias</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="linkProtegida" href="/subirNoticias">Subir Noticia</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="linkPerfil" href="/perfil">Mi Perfil</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="linkDashboard" href="/dashboard">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="linkLogin" href="/login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" id="linkLogout" href="">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<script>
+
+    let token = localStorage.getItem("token");
+    let linkLogout = document.getElementById("linkLogout");
+    let linkLogin = document.getElementById("linkLogin");
+    let linkPerfil = document.getElementById("linkPerfil");
+    let linkProtegida = document.getElementById("linkProtegida");
+    let linkDashboard = document.getElementById("linkDashboard");
+
+    if (token) {
+        linkLogin.style.display = "none";
+    } else {
+        linkLogout.style.display = "none";
+        linkPerfil.style.display = "none";
+        linkProtegida.style.display = "none";
+        linkDashboard.style.display = "none";
+    }
+
+
+    linkLogout.addEventListener("click", (event) => {
+        event.preventDefault();
+        localStorage.removeItem("token");
+        alert("Se ha cerrado sesión.");
+        location.reload();
+    })
+
+
+    linkPerfil.addEventListener("click", (event) => {
+        event.preventDefault();
+        let token = localStorage.getItem("token");
+        location.href = "/perfil?token=" + token
+    })
+
+    linkProtegida.addEventListener("click", (event) => {
+        event.preventDefault();
+        let token = localStorage.getItem("token");
+        location.href = "/subirNoticias?token=" + token
+    })
+
+    linkDashboard.addEventListener("click", (event) => {
+        event.preventDefault();
+        let token = localStorage.getItem("token");
+        location.href = "/dashboard?token=" + token
+    })
+
+</script>
+
+<style>
+    nav {
+        background-color: #69c1ff;
+    }
+</style>
