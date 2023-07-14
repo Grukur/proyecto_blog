@@ -46,9 +46,14 @@ export const addUsuario = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    console.log('hola')
-    console.log(req.token)
-    res.json({ code: 200, message: "Login correcto.", token: req.token });
+    console.log('hola ', req.stamp)
+    res.json({ 
+        code: 200,
+        message: "Login correcto.", 
+        token: req.token, 
+        usuario:req.usuario, 
+        stamp:req.stamp 
+    });
 };
 
 export const editUser = async(req, res) => {

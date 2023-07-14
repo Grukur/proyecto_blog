@@ -1,17 +1,22 @@
 import { Router } from "express";
 import { verifyToken } from "../middlewares/auth.middleware.js";
+import moment from 'moment';
 import Noticias from "../models/Noticias.models.js";
+import Usuario from "../models/Usuario.models.js";
 const router = Router();
 
 //ruta post usuarios
 router.get(["/home", "/"], (req, res) => {
-    let tokenTime = req.tokenTime
-    res.render("home", {tokenTime:tokenTime});
+    res.render("home");
 });
 router.get("/noticias", async (req, res) => {
-    let tokenTime = req.tokenTime
-    let data = await Noticias.findAll()
-    res.render("noticias", {noticias:data, tokenTime:tokenTime})
+    let data = await Noticias.findAll({raw:true})
+    data = data.map(noticia => {
+        noticia.createdAt = moment(noticia.createdAt).format('DD/MM/YYYY h:mm:ss')
+        return noticia
+    })
+    console.log(data)
+    res.render("noticias", {noticias:data})
 });
 
 router.get("/login", (req, res) => {
@@ -22,22 +27,16 @@ router.get("/registro", (req, res) => {
     res.render("registro");
 });
 
-router.get("/dashboard", verifyToken, (req, res) => {
-    let tokenTime = req.tokenTime
-    res.render("dashboard", {tokenTime:tokenTime});
+router.get("/dashboard", verifyToken, async(req, res) => {
+    let data = await Noticias.findAll()
+    res.render("dashboard", {noticias:data});
 });
 
 router.get("/perfil", verifyToken, async (req, res) => {
-    let usuario = req.usuario;
-    let tokenTime = req.tokenTime
-    res.render("perfil", {
-        usuario: usuario.dataValues,
-        tokenTime:tokenTime
-    });
+    res.render("perfil");
 });
 router.get("/subirNoticias", verifyToken, async (req, res) => {
-    let tokenTime = req.tokenTime
-    res.render("subirNoticias", {tokenTime:tokenTime});
+    res.render("subirNoticias");
 })
 
 export default router;

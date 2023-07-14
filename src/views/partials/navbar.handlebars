@@ -1,6 +1,8 @@
 <nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
-        <a class="navbar-brand" href="#">Blog</a>
+        <a id="brand" class="navbar-brand" href="#">Blog</a>
+        <a id="expiracion" class="navbar-brand" href="#"></a>
+        <a id="reloj" class="navbar-brand" href="#"></a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -34,6 +36,55 @@
 </nav>
 
 <script>
+    let fecha = new Date()
+    //Reloj
+    const mostrarHora = () => {
+        let hora = formatoDato(fecha.getHours());
+        let minutos = formatoDato(fecha.getMinutes());
+        let segundos = formatoDato(fecha.getSeconds());
+        document.getElementById("reloj").innerText = `${hora}:${minutos}:${segundos}`;
+    }
+    const formatoDato = (valor) => {
+        if (valor < 10) {
+            return "0" + valor
+        } return valor;
+    }
+
+    let reloj = setInterval(mostrarHora, 1000);
+
+    let user = localStorage.getItem('usuario')
+    if (user) {
+        user = JSON.parse(user)
+        let brand = document.getElementById('brand')
+        brand.innerText = user.autor
+    }
+
+    //Tiempo del token
+    let stamp = localStorage.getItem('stamp')
+    let tiempoActual = Math.floor(Date.now() / 1000)
+    let tokenTime = stamp - tiempoActual;
+    
+    let tHoras, tMinutos, tSegundos
+    const tokenExpira = setInterval(() => {
+        tokenTime--;
+
+        if (tokenTime > 0) {
+            tHoras = formatoDato(Math.floor(tokenTime / 3600));
+            tMinutos = formatoDato(Math.floor((tokenTime % 3600) / 60));
+            tSegundos = formatoDato(tokenTime % 60);
+        } else {
+            tHoras = 0;
+            tMinutos = 0;
+            tSegundos = 0;}
+
+        document.getElementById('expiracion').innerText = `${tHoras}:${tMinutos}:${tSegundos}`
+
+        if (tokenTime <= 0) {
+            clearInterval(tokenTime);
+            window.location.href = "http://localhost:3000/login";
+        }
+    }, 1000)
+
 
     let token = localStorage.getItem("token");
     let linkLogout = document.getElementById("linkLogout");

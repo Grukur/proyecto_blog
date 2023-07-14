@@ -77,6 +77,8 @@
             .then(result => {
                 if (result.code == 200) {
                     localStorage.setItem("token", result.token);
+                    localStorage.setItem('usuario', JSON.stringify(result.usuario))
+                    localStorage.setItem('stamp', result.stamp)
                     alert(result.message);
                     location.href = "/login";
                 } else {

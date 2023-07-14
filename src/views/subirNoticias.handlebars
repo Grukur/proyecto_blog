@@ -1,10 +1,4 @@
-<section>
-    {{#if tokenTime}}
-{{>reloj
-tokenTime=tokenTime
-}}
-{{/if}}
-</section>
+
 
 <div class="container">
     <div class="row">
@@ -22,15 +16,7 @@ tokenTime=tokenTime
                     <div class="mb-3">
                         <input type="text" class="form-control" id="upNoticiaTitulo" name="titulo" placeholder="Titulo"
                             required />
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="upNoticiaAutor" name="autor" placeholder="Autor"
-                            required />
-                    </div>
-                    <div class="mb-3">
-                        <input type="text" class="form-control" id="upNoticiaUsuarioId" name="usuarioId"
-                            placeholder="Id del Autor" required />
-                    </div>
+                    </div>                    
                     <div class="mb-3">
                         <textarea class="form-control" id="upNoticiaTexto" rows="5" name="texto"></textarea>
                     </div>
@@ -38,7 +24,7 @@ tokenTime=tokenTime
                         <input class="form-control" type="file" name="foto" id="upNoticiaFile">
                     </div>
                     <div class="mb-3">
-                        <select id="upNoticiaCategoria" class="form-select" aria-label="Default select example">
+                        <select id="upNoticiaCategoria" class="form-select" aria-label="Default select example" name="categoria">
                             <option selected>Escoge la categoria</option>
                             <option value="Ambiente">Ambiente</option>
                             <option value="Tecnologia">Tecnologia</option>
@@ -92,14 +78,7 @@ tokenTime=tokenTime
             return;
         }
 
-        const formData = new FormData();
-        formData.append("titulo", upNoticiaTitulo.value);
-        formData.append("texto", upNoticiaTexto.value);
-        formData.append("usuarioId", upNoticiaUsuarioId.value);
-        formData.append("categoria", String(upNoticiaCategoria.value));
-        formData.append("foto", document.getElementById("upNoticiaFile").files[0]);
-
-        console.log(upNoticiaCategoria.value)
+        const formData = new FormData(formUpNoticia);
 
         const requestOptions = {
             method: "POST",

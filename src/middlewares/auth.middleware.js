@@ -5,7 +5,7 @@ export const emitToken = async (req, res, next) => {
     let { email, password } = req.body;
     let usuario = await Usuario.findOne({
         where: { email, password },
-        attributes: ["usuarioId", "autor", "email"],
+        attributes: ["usuarioId", "autor", "email", "createdAt"],
     });
 
     if (!usuario) {
@@ -13,14 +13,20 @@ export const emitToken = async (req, res, next) => {
             .status(400)
             .json({ code: 400, message: "Error de autenticación." });
     }
+    let exp = Math.floor(Date.now() / 1000) + 60 * 30
     let token = jwt.sign(
         {
-            exp: Math.floor(Date.now() / 1000) + 60 * 30,
+            exp: exp,
             data: usuario,
         },
         process.env.PASSWORD_SECRET
     );
+    const expTimestamp = exp;    
+
     req.token = token;
+    req.usuario = usuario
+    req.stamp = expTimestamp
+
     console.log('Token given')
     next();
 };
@@ -50,18 +56,13 @@ export const verifyToken = (req, res, next) => {
 
                 try {
                     let usuario = await Usuario.findByPk(decoded.data.usuarioId, {
-                        attributes: ["usuarioId", "autor", "email"],
+                        attributes: ["usuarioId", "autor", "email", 'createdAt'],
                     });
                     if (!usuario) {
                         let msg = ("Usuario ya no existe en el sistema.")
                         return redirectLogin(res, msg)
                     }
-                    const expTimestamp = decoded.exp;
-                    const currentTimestamp = Math.floor(Date.now() / 1000);
-                    const remainingTime = expTimestamp - currentTimestamp;
-
-                    req.usuario = usuario;
-                    req.tokenTime = remainingTime
+                    req.usuario = usuario;            
 
                     console.log('Token: verificado con exito')
                     next();
