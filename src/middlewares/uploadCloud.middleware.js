@@ -1,4 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
+import * as path from "path";
+import { fileURLToPath } from "url";
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 cloudinary.config({
     cloud_name: process.env.STORAGE_NAME,
@@ -8,9 +11,15 @@ cloudinary.config({
 
 export const uploadFilesCloud = (req, res, next) => {
     try {
+        console.log('uploading....')
         let foto = req.files.foto;
-        let size = foto.size
-        console.log(size)
+        let size = foto.size;
+        if(size > 2000000){
+            return res.status(400).json({
+                code: 400,
+                message: `Tamaño no permitido, Tamaño maximo permitido 2MB`,
+            });
+        }
         let formatosPermitidos = ["jpeg", "png", "webp", "gif", "svg"];
         let extension = `${foto.mimetype.split("/")[1]}`;
 
@@ -33,7 +42,7 @@ export const uploadFilesCloud = (req, res, next) => {
                             "Error al subir la imagen en proceso de creación de producto.",
                     });
                 }
-                req.nombreImagen = foto.name;
+                req.nombreImagen = nombreFoto;
                 req.pathImagen = result.url;
                 req.imagenId = result.public_id;
                 
