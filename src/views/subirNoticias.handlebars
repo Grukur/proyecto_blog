@@ -75,6 +75,7 @@
         const token = localStorage.getItem("token");
         if (!token) {
             alert("Token not found. Please log in first.");
+            location.href = '/login'
             return;
         }
 

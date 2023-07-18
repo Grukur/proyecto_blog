@@ -18,10 +18,6 @@ const Comentarios = sequelize.define(
             type: DataTypes.STRING(1000),
             allowNull: false,
         },
-        status: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: true
-        },
     },
     {
         timestamps: true,

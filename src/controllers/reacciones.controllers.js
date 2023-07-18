@@ -1,7 +1,7 @@
 import Noticias from "../models/Noticias.models.js";
 import Reacciones from "../models/Reacciones.models.js";
 import Usuario from "../models/Usuario.models.js";
-import {Sequelize, literal} from "sequelize";
+import { Sequelize, Op } from "sequelize";
 import fs from "fs";
 
 export const findAllReacciones = async (req, res) => {
@@ -30,33 +30,91 @@ export const findAllReacciones = async (req, res) => {
     }
 };
 
-export const addReacciones = async (req, res) => {
-    try {
-        let { like, dislike, usuarioId, noticiaId } = req.body;
-        //req.nombreImagen -> viene desde middleware
-        //req.pathImagen ->viene desde middleware
-
+export const addLike = async (req, res) => {
+    let { usuarioId } = req.usuario;
+    let { noticiaId } = req.params;
+    try {        
         let usuario = await Usuario.findByPk(usuarioId);
         let noticia = await Noticias.findByPk(noticiaId);
 
+        
         if (!usuario || !noticia) {
             return res.status(403).send(`Usuario o Noticia no existe`);
         }
 
-        let reaccionCreada = await Reacciones.create({
-            like,
-            dislike,
-            autor: usuario.autor
+        let [ reaccion, created ] = await Reacciones.findOrCreate({
+            where: { noticiaId:noticiaId,  usuarioId:usuarioId },
+            defaults: {
+                noticiaId,
+                usuarioId,
+                like: true,
+            },
         });
 
-        await usuario.addReacciones(reaccionCreada);
-        await noticia.addReacciones(reaccionCreada);
-
-        res.status(201).json({
-            code: 201,
-            message: `reaccion creado con éxito -> id: ${reaccionCreada.id}`
-        });
+        if (created) {
+            await usuario.addReacciones(created);
+            await noticia.addReacciones(created);
+            res.status(201).json({ code: 201, message: 'Like guardado con exito!' })
+        } else {
+            if(reaccion.like){                
+                await reaccion.destroy();
+            }
+            await usuario.addReacciones(reaccion);
+            await noticia.addReacciones(reaccion);
+            reaccion.update({
+                like: true
+              })
+            res.status(201).json({ code: 201, message: 'Ahora se dió Like!' })
+        };
+        
     } catch (error) {
+        console.log(error)
+        res.status(500).json({
+            code: 500,
+            message: "Error al crear reaccion en la base de datos. ",
+        });
+    }
+};
+
+export const addDislike = async (req, res) => {
+    let { usuarioId } = req.usuario;
+    let { noticiaId } = req.params;
+    try {
+        let usuario = await Usuario.findByPk(usuarioId);
+        let noticia = await Noticias.findByPk(noticiaId);
+        
+        if (!usuario || !noticia) {
+            return res.status(403).send(`Usuario o Noticia no existe`);
+        }
+        
+        console.log(usuarioId, ' ', noticiaId)
+        let { reaccion, created } = await Reacciones.findOrCreate({
+            where: { noticiaId:noticiaId,  usuarioId:usuarioId },
+            defaults: {
+                noticiaId,
+                usuarioId,
+                like: false,
+            },
+        });
+        console.log('resultado ', reaccion,' ', created)
+        if (created) {
+            await usuario.addReacciones(created);
+            await noticia.addReacciones(created);
+            res.status(201).json({ code: 201, message: 'Dislike guardado con exito!' })
+        } else {
+            if(!reaccion.like){                
+                await reaccion.destroy();
+            }
+            await usuario.addReacciones(reaccion);
+            await noticia.addReacciones(reaccion);
+            reaccion.update({
+                like: false
+            });
+            res.status(201).json({ code: 201, message: 'Ahora se dió dislike!' })
+        };
+
+    } catch (error) {
+        console.log(error)
         res.status(500).json({
             code: 500,
             message: "Error al crear reaccion en la base de datos. " + error,

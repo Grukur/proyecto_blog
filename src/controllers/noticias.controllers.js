@@ -15,7 +15,7 @@ export const findAllNoticias = async (req, res) => {
                  {model: Reacciones, attributes:['autor', 'usuarioId', 'like', 'dislike']}
             ],
             where: { status: true },
-            order: [['noticiaId', 'DESC']],
+            order: [['createdAt', 'DESC']],
         });
         res.json({ code: 200, message: "OK", data: noticia });
     } catch (error) {

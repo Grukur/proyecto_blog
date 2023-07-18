@@ -7,30 +7,49 @@ import Reacciones from "./Reacciones.models.js";
 Usuarios.hasMany(Noticias, {
     foreignKey: 'usuarioId'
 });
-Noticias.belongsTo(Usuarios);
+Noticias.belongsTo(Usuarios, {
+    foreignKey: 'usuarioId'
+});
 
 //relacion uno a uno de Usuario a Reacciones
 Usuarios.hasMany(Reacciones, {
-    foreignKey: 'usuarioId'
+    as: 'reacciones',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    foreignKey:'usuarioId',
 });
-Reacciones.belongsTo(Usuarios)
+Reacciones.belongsTo(Usuarios, {
+    foreignKey: 'usuarioId'
+})
 
 //relacion uno a uno de Usuario a Comentarios
 Usuarios.hasMany(Comentarios, {
     foreignKey: 'usuarioId'
 });
-Comentarios.belongsTo(Usuarios);
+Comentarios.belongsTo(Usuarios, {
+    foreignKey: 'usuarioId'
+});
 
 //relacion uno a muchos de Noticias a Comentarios
 Noticias.hasMany(Comentarios,{
+    as: 'comentarios',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    foreignKey:'noticiaId',
+});
+Comentarios.belongsTo(Noticias, {
     foreignKey: 'noticiaId'
 });
-Comentarios.belongsTo(Noticias);
 
 //relacion uno a muchos de Noticias a Reacciones
 Noticias.hasMany(Reacciones,{
-    foreignKey: 'noticiaId'
+    as: 'reacciones',
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+    foreignKey:'noticiaId',
 });
-Reacciones.belongsTo(Noticias);
+Reacciones.belongsTo(Noticias, {
+    foreignKey:'noticiaId',
+});
 
 

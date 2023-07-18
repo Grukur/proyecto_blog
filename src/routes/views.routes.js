@@ -10,13 +10,13 @@ router.get(["/home", "/"], (req, res) => {
     res.render("home");
 });
 router.get("/noticias", async (req, res) => {
+    let usuario = req.usuario
     let data = await Noticias.findAll({raw:true})
     data = data.map(noticia => {
         noticia.createdAt = moment(noticia.createdAt).format('DD/MM/YYYY h:mm:ss')
         return noticia
     })
-    console.log(data)
-    res.render("noticias", {noticias:data})
+    res.render("noticias", {noticias:data, usuario})
 });
 
 router.get("/login", (req, res) => {
@@ -33,7 +33,9 @@ router.get("/dashboard", verifyToken, async(req, res) => {
 });
 
 router.get("/perfil", verifyToken, async (req, res) => {
-    res.render("perfil");
+    let usuario = req.usuario
+    usuario.dataValues.createdAt = moment(usuario.dataValues.createdAt).format('DD/MM/YYYY h:mm:ss')
+    res.render("perfil", {usuario});
 });
 router.get("/subirNoticias", verifyToken, async (req, res) => {
     res.render("subirNoticias");

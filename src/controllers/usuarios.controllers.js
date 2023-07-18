@@ -13,7 +13,6 @@ export const findAllUsuarios = async (req, res) => {
         });
         res.json({ code: 200, message: "OK", data: usuarios });
     } catch (error) {
-        console.log();
         res.status(500).json({
             code: 500,
             message: `Error al consultar los usuarios - error: ${error}`,
@@ -32,12 +31,12 @@ export const addUsuario = async (req, res) => {
             email,
             password
         });
+        console.log(nuevoUsuario)
         res.status(201).json({
             code: 201,
-            message: `Se ha creado el usuario ${autor}, con ID: ${nuevoUsuario.id}`,
+            message: `Se ha creado el usuario ${autor}`,
         });
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             code: 500,
             message: `Error al crear el usuario - error: ${error}`,
@@ -46,14 +45,20 @@ export const addUsuario = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-    console.log('hola ', req.stamp)
-    res.json({ 
-        code: 200,
-        message: "Login correcto.", 
-        token: req.token, 
-        usuario:req.usuario, 
-        stamp:req.stamp 
-    });
+    try {
+        res.json({ 
+            code: 200,
+            message: "Login correcto.", 
+            token: req.token, 
+            usuario:req.usuario, 
+            stamp:req.stamp 
+        });
+    } catch (error) {
+        res.status(400).json({
+            code: 400,
+            message: `Error, usuario no existe al parecer - error: ${error}`,
+        });
+    }
 };
 
 export const editUser = async(req, res) => {
@@ -99,7 +104,6 @@ export const changeStatus = async (req, res) => {
         )
       res.status(201).send(`Usuario con id: ${id} ha sido anulado.`)
     } catch (error) {
-      console.log(error)
       res.status(500).json({
         code: 500,
         message: `Usuario con id: ${id} no se pudo anular - error: \n ${error}`

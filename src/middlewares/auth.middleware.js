@@ -11,7 +11,7 @@ export const emitToken = async (req, res, next) => {
     if (!usuario) {
         return res
             .status(400)
-            .json({ code: 400, message: "Error de autenticación." });
+            .json({ code: 400, message: "Error de autentificación."});
     }
     let exp = Math.floor(Date.now() / 1000) + 60 * 30
     let token = jwt.sign(
@@ -33,9 +33,10 @@ export const emitToken = async (req, res, next) => {
 
 export const verifyToken = (req, res, next) => {
     try {
+        console.log('verificando token....')
         let { token } = req.query;
         if (!token) {
-            token = req.headers['authorization'];
+            token = req.headers.authorization;
             if (!token) {
                 let msg = ("ruta protegida, debe proporcionar un token de acceso.")
                 return redirectLogin(res, msg)
@@ -44,7 +45,6 @@ export const verifyToken = (req, res, next) => {
                 throw new Error("No se ha proporcionado un token");
             }
         }
-
         jwt.verify(
             token,
             process.env.PASSWORD_SECRET,
@@ -62,12 +62,12 @@ export const verifyToken = (req, res, next) => {
                         let msg = ("Usuario ya no existe en el sistema.")
                         return redirectLogin(res, msg)
                     }
+                    
                     req.usuario = usuario;            
-
                     console.log('Token: verificado con exito')
                     next();
                 } catch (error) {
-                    res.status(500).json({ code: 500, message: "Error en autencicación." })
+                    res.status(500).json({ code: 500, message: "Error en autentificación." })
                 }
             }
         );
