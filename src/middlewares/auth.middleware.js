@@ -19,7 +19,7 @@ export const emitToken = async (req, res, next) => {
             exp: exp,
             data: usuario,
         },
-        process.env.PASSWORD_SECRET
+        process.env.production.PASSWORD_SECRET
     );
     const expTimestamp = exp;    
 
