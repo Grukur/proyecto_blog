@@ -22,6 +22,7 @@ export const uploadFilesCloud = (req, res, next) => {
         }
         let formatosPermitidos = ["jpeg", "png", "webp", "gif", "svg"];
         let extension = `${foto.mimetype.split("/")[1]}`;
+        let nombreFoto = `${foto.mimetype.split("/")[0]}`;
 
         if (!formatosPermitidos.includes(extension)) {
             return res.status(400).json({

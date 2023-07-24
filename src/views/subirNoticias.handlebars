@@ -91,7 +91,7 @@
         };
 
         try {
-            const response = await fetch("/api/v1/noticias", requestOptions);
+            const response = await fetch("/api/v1/noticias/cloud", requestOptions);
             const result = await response.json();
 
             if (result.code === 201) {

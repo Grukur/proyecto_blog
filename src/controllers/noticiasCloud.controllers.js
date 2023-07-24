@@ -1,5 +1,7 @@
 import Producto from "../models/Reacciones.models.js";
 import { deleteFileCloud } from "../middlewares/uploadCloud.middleware.js";
+import Usuario from '../models/Usuario.models.js';
+import Noticias from '../models/Noticias.models.js';
 
 
 export const addNoticiasCloud = async (req, res) => {
@@ -27,6 +29,7 @@ export const addNoticiasCloud = async (req, res) => {
             message: `Noticia creado con éxito -> id: ${noticiaCreada.noticiaId}, autor: ${noticiaCreada.autor}`
         });
     } catch (error) {
+        deleteFileCloud(req.imagenId);
         res.status(500).json({
             code: 500,
             message: `Error al crear noticia en la base de datos - error: ${error}`
