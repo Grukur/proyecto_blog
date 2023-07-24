@@ -63,6 +63,6 @@ export const deleteFileCloud = (imagenId) => {
         if (error) {
             return console.log("Error al eliminar la imagen del servicio cloud: ", error);
         }
-        console.log(`Imagen con ID: ${imagenId} ha sido eliminada con éxito el servicio cloud.`);
+        console.log(`Imagen con ID: ${imagenId} ha sido eliminada con éxito del servicio cloud.`);
     });
 }

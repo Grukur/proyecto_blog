@@ -1,4 +1,3 @@
-import Producto from "../models/Reacciones.models.js";
 import { deleteFileCloud } from "../middlewares/uploadCloud.middleware.js";
 import Usuario from '../models/Usuario.models.js';
 import Noticias from '../models/Noticias.models.js';
@@ -21,7 +20,7 @@ export const addNoticiasCloud = async (req, res) => {
             categoria,
             img: req.nombreImagen,
             rutaImagen: req.pathImagen,
-            publicIdImagen: 0,
+            publicIdImagen: req.imagenId,
         });
 
         res.status(201).json({
@@ -41,7 +40,7 @@ export const editNoticiasCloud = async (req, res) => {
     try {
         let { id } = req.params;
         let { nombre, descripcion, precio } = req.body;
-        let producto = await Producto.findByPk(id);
+        let producto = await Noticias.findByPk(id);
 
         if (!producto) {
             return res.status(404).json({ code: 404, message: 'Producto no encontrado.' })
@@ -80,24 +79,23 @@ export const editNoticiasCloud = async (req, res) => {
 }
 
 export const deleteNoticiasCloud = async (req, res) => {
+    let { id } = req.params;
+    let noticia = await Noticias.findByPk(id);
     try {
-        let { id } = req.params;
-        let producto = await Producto.findByPk(id);
-        if (!producto) {
-            return res.status(404).send('No existe ese producto');
+        if (!noticia) {
+            return res.status(404).send('No existe ese noticia');
         }
-        let nombre = producto.nombre
-        deleteFileCloud(req.imagenId)
+        deleteFileCloud(noticia.publicIdImagen)
+        await noticia.destroy();
 
         res.status(200).json({
             code: 200,
-            message: `producto con id y nombre: ${id} - ${nombre} ha sido eliminado.`
-        })
-
+            message: `noticia con ID: ${id} ha sido eliminado.`
+        });
     } catch (error) {
         res.status(500).send({
             code: 500,
-            message: `producto con id y nombre: ${id} - ${nombre} no se pudo eliminar - error: \n ${error}`
+            message: `noticia con id y nombre: ${id} - ${nombre} no se pudo eliminar - error: \n ${error}`
         });
     }
 }
