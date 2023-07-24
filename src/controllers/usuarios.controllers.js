@@ -26,12 +26,11 @@ export const addUsuario = async (req, res) => {
         if(password.length < 8){
             return res.status(406).send("La contraseña debe tener minimo 8 caracteres.")
         }
-        let nuevoUsuario = await Usuario.create({
+        await Usuario.create({
             autor,
             email,
             password
         });
-        console.log(nuevoUsuario)
         res.status(201).json({
             code: 201,
             message: `Se ha creado el usuario ${autor}`,

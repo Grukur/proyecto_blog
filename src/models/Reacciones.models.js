@@ -11,6 +11,7 @@ const Reacciones = sequelize.define(
         },
     },
     {
+        tableName: "reacciones",
         timestamps: true,
     }
 );

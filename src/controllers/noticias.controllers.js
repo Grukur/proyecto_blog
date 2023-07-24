@@ -31,7 +31,6 @@ export const addNoticias = async (req, res) => {
     try {
         let {usuarioId} = req.usuario
         let { titulo, texto, categoria } = req.body;
-        console.log(titulo, texto, categoria)
         //req.nombreImagen -> viene desde upload.middleware
         //req.pathImagen ->viene desde upload.middleware
 

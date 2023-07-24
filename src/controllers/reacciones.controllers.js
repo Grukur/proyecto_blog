@@ -31,42 +31,36 @@ export const findAllReacciones = async (req, res) => {
 };
 
 export const addLike = async (req, res) => {
-    let { usuarioId } = req.usuario;
+    let usuario = req.usuario.toJSON();
     let { noticiaId } = req.params;
-    try {        
-        let usuario = await Usuario.findByPk(usuarioId);
-        let noticia = await Noticias.findByPk(noticiaId);
-
-        
-        if (!usuario || !noticia) {
-            return res.status(403).send(`Usuario o Noticia no existe`);
-        }
+    try {  
 
         let [ reaccion, created ] = await Reacciones.findOrCreate({
-            where: { noticiaId:noticiaId,  usuarioId:usuarioId },
+            where: { noticiaId: noticiaId,  usuarioId: usuario.id },
             defaults: {
+                usuarioId: usuario.id,
                 noticiaId,
-                usuarioId,
                 like: true,
             },
         });
 
+        let message;
+
         if (created) {
-            await usuario.addReacciones(created);
-            await noticia.addReacciones(created);
-            res.status(201).json({ code: 201, message: 'Like guardado con exito!' })
+            message = 'Like guardado con exito!'
         } else {
-            if(reaccion.like){                
+            if(reaccion.like){     
+                message = 'Like eliminado con exito!'           
                 await reaccion.destroy();
             }
-            await usuario.addReacciones(reaccion);
-            await noticia.addReacciones(reaccion);
             reaccion.update({
                 like: true
-              })
-            res.status(201).json({ code: 201, message: 'Ahora se dió Like!' })
+            })
+            message = 'Like modificado con exito!'
+            
         };
-        
+        res.status(201).json({ code: 201, message })
+
     } catch (error) {
         console.log(error)
         res.status(500).json({
@@ -77,22 +71,15 @@ export const addLike = async (req, res) => {
 };
 
 export const addDislike = async (req, res) => {
-    let { usuarioId } = req.usuario;
+    let usuario = req.usuario;
     let { noticiaId } = req.params;
     try {
-        let usuario = await Usuario.findByPk(usuarioId);
-        let noticia = await Noticias.findByPk(noticiaId);
         
-        if (!usuario || !noticia) {
-            return res.status(403).send(`Usuario o Noticia no existe`);
-        }
-        
-        console.log(usuarioId, ' ', noticiaId)
         let { reaccion, created } = await Reacciones.findOrCreate({
-            where: { noticiaId:noticiaId,  usuarioId:usuarioId },
+            where: { noticiaId: noticiaId,  usuarioId: usuario.id },
             defaults: {
+                usuarioId: usuario.id,
                 noticiaId,
-                usuarioId,
                 like: false,
             },
         });
